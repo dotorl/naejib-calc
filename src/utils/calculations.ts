@@ -8,7 +8,7 @@ export function calculateLoan(
   annualRate: number,
   months: number,
   balloonMonths: number = 0,
-  method: RepaymentMethod = 'equalPayment'
+  method: RepaymentMethod = 'equalPrincipalInterest'
 ): LoanCalculation {
   if (principal <= 0 || months <= 0) {
     return {
@@ -27,7 +27,7 @@ export function calculateLoan(
   let monthlyPayment = 0;
 
   // 원리금균등 방식
-  if (method === 'equalPayment') {
+  if (method === 'equalPrincipalInterest') {
     if (monthlyRate > 0) {
       monthlyPayment =
         (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) /
@@ -75,7 +75,7 @@ export function calculateLoan(
     monthlyPayment = schedule[0]?.payment || 0;
   }
   // 만기일시 상환
-  else if (method === 'balloon') {
+  else if (method === 'bullet') {
     for (let month = 1; month <= months; month++) {
       const interest = balance * monthlyRate;
       const principalPayment = month === months ? balance : 0;

@@ -2,7 +2,7 @@
 export const MENU_ITEMS = [
   {
     id: 'funding-plan',
-    label: '자금조달계획서',
+    label: '자금조달계획서(약식)',
     icon: '🏠',
     path: '/',
   },
@@ -13,23 +13,23 @@ export const MENU_ITEMS = [
     path: '/loan-calculator',
   },
   {
-    id: 'savings-calculator',
-    label: '예적금계산기',
-    icon: '🏦',
-    path: '/savings-calculator',
-  },
-  {
-    id: 'investment-calculator',
-    label: '투자계산기',
-    icon: '📈',
-    path: '/investment-calculator',
-  },
-  {
     id: 'gift-tax-calculator',
     label: '증여세계산기',
     icon: '📋',
     path: '/gift-tax-calculator',
   },
+  // {
+  //   id: 'savings-calculator',
+  //   label: '예적금계산기',
+  //   icon: '🏦',
+  //   path: '/savings-calculator',
+  // },
+  // {
+  //   id: 'investment-calculator',
+  //   label: '투자계산기',
+  //   icon: '📈',
+  //   path: '/investment-calculator',
+  // },
 ] as const;
 
 // 상환 방식

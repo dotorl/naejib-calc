@@ -1,5 +1,5 @@
 // 상환 방식
-export type RepaymentMethod = 'equalPrincipal' | 'equalPayment' | 'balloon';
+export type RepaymentMethod = 'equalPrincipalInterest' | 'equalPrincipal' | 'bullet';
 
 // 자금조달계획서 상태
 export interface FundingPlanState {
@@ -34,6 +34,14 @@ export interface LoanCalculatorState {
   bankMethod: RepaymentMethod;    // 은행대출 상환방식
   parentMethod: RepaymentMethod;  // 부모님차용 상환방식
   customOptimalRate: number | null; // 사용자 지정 최적 이자율
+}
+
+// 증여세계산기 상태
+export interface GiftTaxCalculatorState {
+  giftAmount: number;             // 증여재산평가액
+  deduction: number;              // 증여재산공제액
+  appraisalFee: number;           // 감정평가수수료
+  hasReportingDiscount: boolean;  // 신고세액공제 적용 여부
 }
 
 // 계산 결과
