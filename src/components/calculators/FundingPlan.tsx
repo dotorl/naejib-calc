@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { formatNumberWithCommas, parseFormattedNumber, filterIntegerInput } from '@/utils/formatNumber';
+import { useScrollDepthTracker } from '@/hooks/useScrollTracker';
+import { trackClick, trackCalculation } from '@/lib/gtag';
 
 // 숫자 입력 필드 컴포넌트
 function NumberInputField({
@@ -59,6 +61,9 @@ export default function FundingPlan() {
   const clearAppliedAction = useCalculatorStore((state) => state.clearAppliedAction);
 
   const [isApplied, setIsApplied] = useState(false);
+
+  // 스크롤 깊이 추적
+  useScrollDepthTracker();
 
   const selfFunds = fundingPlan.selfFunds;
   const bankLoans = fundingPlan.bankLoans;
@@ -125,6 +130,17 @@ export default function FundingPlan() {
   const grandTotal = selfFundsTotal + bankLoansTotal + otherBorrowing;
 
   const handleApplyToLoan = () => {
+    trackClick('대출이자계산기에 금액 적용', 'button', {
+      page: 'funding_plan',
+      total_amount: grandTotal,
+      bank_loans: bankLoansTotal,
+      other_borrowing: otherBorrowing,
+    });
+    trackCalculation('funding_plan', 'apply_to_loan', {
+      total_amount: grandTotal,
+      bank_loans: bankLoansTotal,
+      other_borrowing: otherBorrowing,
+    });
     applyFundingToLoan();
     setIsApplied(true);
     setTimeout(() => {

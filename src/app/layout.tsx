@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "@/styles/globals.scss";
 import MainLayout from "@/components/layout/MainLayout";
 import { Toaster } from 'react-hot-toast';
+import GoogleAnalytics from '@/components/GoogleAnalytics';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://naejibcalc.kr'),
@@ -94,6 +95,7 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <GoogleAnalytics />
         <Toaster
           position="top-center"
           toastOptions={{
