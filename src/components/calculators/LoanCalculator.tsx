@@ -5,6 +5,7 @@ import { useCalculatorStore } from '@/store/useCalculatorStore';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
+import { formatNumberWithCommas, parseFormattedNumber, filterIntegerInput } from '@/utils/formatNumber';
 
 type RepaymentMethod = 'equalPrincipalInterest' | 'equalPrincipal' | 'bullet';
 
@@ -235,20 +236,39 @@ export default function LoanCalculator() {
     max: number;
     step?: number;
     className?: string;
-  }) => (
-    <input
-      type="number"
-      value={value}
-      onChange={(e) => {
-        const v = Number(e.target.value);
-        if (v >= min && v <= max) onChange(v);
-      }}
-      min={min}
-      max={max}
-      step={step}
-      className={`w-24 px-2 py-1 border rounded text-right font-semibold ${className}`}
-    />
-  );
+  }) => {
+    const [localValue, setLocalValue] = useState(formatNumberWithCommas(value));
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const filtered = step === 1 || step === 10000000 ? filterIntegerInput(e.target.value) : e.target.value.replace(/[^\d.]/g, '');
+      const formatted = filtered ? formatNumberWithCommas(filtered) : '';
+      setLocalValue(formatted);
+      const num = parseFormattedNumber(formatted);
+      if (num >= min && num <= max) onChange(num);
+    };
+
+    const handleBlur = () => {
+      const num = parseFormattedNumber(localValue);
+      const validNum = Math.min(Math.max(num, min), max);
+      setLocalValue(formatNumberWithCommas(validNum));
+      onChange(validNum);
+    };
+
+    useEffect(() => {
+      setLocalValue(formatNumberWithCommas(value));
+    }, [value]);
+
+    return (
+      <input
+        type="text"
+        inputMode="numeric"
+        value={localValue}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        className={`w-24 px-2 py-1 border rounded text-right font-semibold ${className}`}
+      />
+    );
+  };
 
   return (
     <div className="space-y-4">

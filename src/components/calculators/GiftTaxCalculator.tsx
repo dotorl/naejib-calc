@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useCalculatorStore } from '@/store/useCalculatorStore';
+import { formatNumberWithCommas, parseFormattedNumber, filterIntegerInput } from '@/utils/formatNumber';
 
 // 증여세 구간별 세율 및 누진공제액
 const TAX_BRACKETS = [
@@ -30,39 +31,39 @@ function NumberInputField({
   step?: number;
   unit?: string;
 }) {
-  const [localValue, setLocalValue] = useState(value === 0 ? '' : value.toString());
+  const [localValue, setLocalValue] = useState(value === 0 ? '' : formatNumberWithCommas(value));
 
   // 외부에서 value가 변경되면 localValue도 업데이트
   useEffect(() => {
-    setLocalValue(value === 0 ? '' : value.toString());
+    setLocalValue(value === 0 ? '' : formatNumberWithCommas(value));
   }, [value]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocalValue(e.target.value);
-    const num = Number(e.target.value) || 0;
+    const filtered = filterIntegerInput(e.target.value);
+    const formatted = filtered ? formatNumberWithCommas(filtered) : '';
+    setLocalValue(formatted);
+    const num = parseFormattedNumber(formatted);
     if (num >= min && num <= max) {
       onChange(num);
     }
   };
 
   const handleBlur = () => {
-    const num = Number(localValue) || 0;
+    const num = parseFormattedNumber(localValue);
     const validNum = Math.min(Math.max(num, min), max);
-    setLocalValue(validNum === 0 ? '' : validNum.toString());
+    setLocalValue(validNum === 0 ? '' : formatNumberWithCommas(validNum));
     onChange(validNum);
   };
 
   return (
     <div className="flex items-center gap-2">
       <input
-        type="number"
+        type="text"
+        inputMode="numeric"
         value={localValue}
         onChange={handleChange}
         onBlur={handleBlur}
         placeholder="0"
-        min={min}
-        max={max}
-        step={step}
         className="w-32 px-2 py-1 border rounded text-right font-semibold"
       />
       <span className="text-sm text-gray-600">{unit}</span>

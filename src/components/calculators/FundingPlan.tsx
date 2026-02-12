@@ -5,6 +5,7 @@ import { useCalculatorStore } from '@/store/useCalculatorStore';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
+import { formatNumberWithCommas, parseFormattedNumber, filterIntegerInput } from '@/utils/formatNumber';
 
 // 숫자 입력 필드 컴포넌트
 function NumberInputField({
@@ -16,24 +17,27 @@ function NumberInputField({
   value: number;
   onChange: (v: number) => void;
 }) {
-  const [localValue, setLocalValue] = useState(value === 0 ? '' : value.toString());
+  const [localValue, setLocalValue] = useState(value === 0 ? '' : formatNumberWithCommas(value));
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLocalValue(e.target.value);
-    const num = Number(e.target.value) || 0;
+    const filtered = filterIntegerInput(e.target.value);
+    const formatted = filtered ? formatNumberWithCommas(filtered) : '';
+    setLocalValue(formatted);
+    const num = parseFormattedNumber(formatted);
     onChange(num);
   };
 
   const handleBlur = () => {
-    const num = Number(localValue) || 0;
-    setLocalValue(num === 0 ? '' : num.toString());
+    const num = parseFormattedNumber(localValue);
+    setLocalValue(num === 0 ? '' : formatNumberWithCommas(num));
   };
 
   return (
     <div className="flex justify-between items-center py-1 gap-2">
       <span className="text-xs sm:text-sm text-gray-600 flex-shrink min-w-0">{label}</span>
       <input
-        type="number"
+        type="text"
+        inputMode="numeric"
         value={localValue}
         onChange={handleChange}
         onBlur={handleBlur}

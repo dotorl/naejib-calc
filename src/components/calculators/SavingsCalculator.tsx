@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { formatNumberWithCommas, parseFormattedNumber, filterIntegerInput } from '@/utils/formatNumber';
 
 type SavingsType = 'deposit' | 'installment';
 type PeriodUnit = 'year' | 'month';
@@ -186,9 +187,14 @@ export default function SavingsCalculator() {
               {isDeposit ? '예치금액' : '월납입금'}
             </label>
             <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(Number(e.target.value))}
+              type="text"
+              inputMode="numeric"
+              value={formatNumberWithCommas(amount)}
+              onChange={(e) => {
+                const filtered = filterIntegerInput(e.target.value);
+                const num = parseFormattedNumber(filtered || '0');
+                setAmount(num);
+              }}
               onFocus={() => setAmountFocused(true)}
               onBlur={() => setTimeout(() => setAmountFocused(false), 200)}
               className="w-full px-3 py-2 border rounded text-right font-semibold text-lg"
@@ -235,9 +241,14 @@ export default function SavingsCalculator() {
               </button>
             </div>
             <input
-              type="number"
-              value={period}
-              onChange={(e) => setPeriod(Number(e.target.value))}
+              type="text"
+              inputMode="numeric"
+              value={formatNumberWithCommas(period)}
+              onChange={(e) => {
+                const filtered = filterIntegerInput(e.target.value);
+                const num = parseFormattedNumber(filtered || '0');
+                setPeriod(num);
+              }}
               onFocus={() => setPeriodFocused(true)}
               onBlur={() => setTimeout(() => setPeriodFocused(false), 200)}
               className="w-full px-3 py-2 border rounded text-right font-semibold"
